@@ -8,7 +8,8 @@
         <Panel
           v-for="(doc, index) in dataDisplay"
           :PanelData="doc"
-          :key="index" />
+          :key="index"
+          :Delete="Delete" />
       </TransitionGroup>
     </div>
   </div>
@@ -24,31 +25,29 @@ async function fetch() {
   await axios
     .get('http://localhost:8080/api/products')
     .then(function (response) {
-      dataDisplay.value = [
-        ...response.data,
-        ...response.data,
-        ...response.data,
-      ];
+      dataDisplay.value = [...response.data];
     });
 }
+async function Delete(id) {
+  // await axios
+  //   .patch(`http://localhost:8080/api/products/Delete/${id}`)
+  //   .then(function (response) {
+  //     console.log('deleted');
+  //     fetch();
+  //   });
+  dataDisplay.value = dataDisplay.value.filter((i) => i !== id);
+}
+
 fetch();
 </script>
 <style>
-.list-move, /* apply transition to moving elements */
 .list-enter-active,
 .list-leave-active {
   transition: all 0.5s ease;
 }
-
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
   transform: translateX(30px);
-}
-
-/* ensure leaving items are taken out of layout flow so that moving
-   animations can be calculated correctly. */
-.list-leave-active {
-  position: absolute;
 }
 </style>

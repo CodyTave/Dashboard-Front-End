@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="Nav"
-    class="text-dark-2 border-dark-3 border-b-[1px] rounded-lg text-left">
+    class="text-dark-2 border-dark-3 border-b-[1px] text-left">
     <div
       :class="`grid grid-cols-2 md:grid-cols-5 sm:grid-cols-3 gap-10 mt-5 p-2 ml-5 sm:ml-16`">
       <div
@@ -41,7 +41,9 @@
       <button class="bg-light-1 text-dark-0 hover:text-light-0 hover:bg-dark-1">
         Edit
       </button>
-      <button class="bg-red-0 text-light-1 hover:text-dark-0 hover:bg-light-0">
+      <button
+        @click="Delete(PanelData)"
+        class="bg-red-0 text-light-1 hover:text-dark-0 hover:bg-light-0">
         Delete
       </button>
     </div>
@@ -51,6 +53,7 @@
 <script setup>
 import { categoriesNav } from '../Constants/constants';
 import { search, drop } from '../assets';
+import axios from 'axios';
 import { ref } from 'vue';
 const props = defineProps({
   PanelData: {
@@ -61,6 +64,10 @@ const props = defineProps({
     type: Boolean,
     required: false,
     default: false,
+  },
+  Delete: {
+    type: Function,
+    required: false,
   },
 });
 const optionToggle = ref(false);
