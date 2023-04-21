@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body {
+  font-family: 'Poppins', sans-serif;
+}
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 500ms;
+}
+
+/* For webkit based browsers */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* For the track */
+::-webkit-scrollbar-track {
+  background: #171717;
+}
+
+/* For the thumb */
+::-webkit-scrollbar-thumb {
+  background: #F7F1F4;
+}
+
+/* For the thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #c2bfc0;
+}
