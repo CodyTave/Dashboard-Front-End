@@ -14,7 +14,7 @@ export const Sidebar = [
     },
     {
       id: 'trash',
-      title: 'Trash Bin',
+      title: 'Trash',
       icon: trash,
     },
   ],

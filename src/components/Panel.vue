@@ -1,66 +1,113 @@
 <template>
-  <div
-    v-if="Nav"
-    class="text-dark-2 border-dark-3 border-b-[1px] text-left">
+  <div v-if="Nav && NavwImg" class="fadeInBlur">
     <div
-      :class="`grid grid-cols-2 md:grid-cols-5 sm:grid-cols-3 gap-10 mt-5 p-2 ml-5 sm:ml-16`">
+      @click="setToggle(PanelData.id)"
+      class="text-dark-2 rounded-lg text-left border-dark-3 border-b-[1px] select-none grid md:grid-cols-5 mt-5 md:gap-5"
+    >
+      <div class="hidden md:grid"></div>
+
+      <div
+        class="grid grid-cols-2 md:grid-cols-4 sm:grid-cols-3 gap-10 p-2 pan col-span-4 ml-16"
+      >
+        <div class="sm:truncate whitespace-nowrap">Product</div>
+        <div class="truncate hidden sm:grid">Slug</div>
+        <div class="truncate hidden md:grid">Created</div>
+        <div class="cursor-pointer mx-auto">
+          <img class="w-4" :src="search" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    v-else-if="Nav"
+    class="text-dark-2 border-dark-3 border-b-[1px] text-left fadeInBlur"
+  >
+    <div
+      :class="`grid grid-cols-2 md:grid-cols-5 sm:grid-cols-3 gap-10 mt-5 p-2 ml-5 sm:ml-16`"
+    >
       <div
         v-for="item in categoriesNav"
         :class="`${item.hide ? 'hidden md:grid' : ''} ${
           item.hidee ? 'hidden sm:grid' : ''
-        }`">
+        }`"
+      >
         {{ item.title }}
       </div>
-      <li class="flex cursor-pointer mx-auto">
+      <div class="cursor-pointer mx-auto">
+        <img class="w-4" :src="search" />
+      </div>
+    </div>
+  </div>
+  <div v-else-if="PanelData.image !== undefined">
+    <div
+      @click="setToggle(PanelData.id)"
+      class="text-light-1 bg-dark-4 rounded-lg text-left cursor-pointer select-none grid md:grid-cols-5 mt-5 md:gap-5"
+    >
+      <div
+        class="bg-light-3 rounded-lg hidden md:grid drop-shadow-[10px_0px_3px_rgba(0,0,0,0.1)]"
+      >
         <img
-          class="w-4"
-          :src="search" />
-      </li>
+          class="object-cover w-full h-10 rounded-lg"
+          :src="PanelData.image || productSample"
+        />
+      </div>
+
+      <div
+        class="grid grid-cols-2 md:grid-cols-4 sm:grid-cols-3 gap-10 p-2 pan col-span-4 ml-16"
+      >
+        <div class="sm:truncate whitespace-nowrap">{{ PanelData.nom }}</div>
+        <div class="truncate hidden sm:grid">{{ PanelData.slug }}</div>
+        <div class="truncate hidden md:grid">{{ PanelData.date_creation }}</div>
+        <div class="flex mx-auto">
+          <img class="w-[10px]" :src="drop" />
+        </div>
+      </div>
     </div>
   </div>
   <div v-else>
     <div
-      @click="setToggle"
-      class="text-light-1 bg-dark-4 rounded-lg text-left cursor-pointer select-none">
+      @click="setToggle(PanelData.id)"
+      class="text-light-1 bg-dark-4 rounded-lg text-left cursor-pointer select-none"
+    >
       <div
-        class="grid grid-cols-2 md:grid-cols-5 sm:grid-cols-3 gap-10 mt-5 p-2 ml-5 sm:ml-16 pan">
+        class="grid grid-cols-2 md:grid-cols-5 sm:grid-cols-3 gap-10 mt-5 p-2 ml-5 sm:ml-16 pan"
+      >
         <div class="sm:truncate whitespace-nowrap">{{ PanelData.nom }}</div>
         <div class="truncate hidden sm:grid">{{ PanelData.slug }}</div>
         <div class="truncate hidden md:grid">{{ PanelData.date_creation }}</div>
-        <div class="truncate hidden md:grid">{{ PanelData.date_creation }}</div>
+        <div class="hidden md:grid">
+          <div v-if="PanelData.date_modification" class="truncate">
+            {{ PanelData.date_modification }}
+          </div>
+          <div v-else>Never</div>
+        </div>
         <div class="flex mx-auto">
-          <img
-            class="w-[10px]"
-            :src="drop" />
+          <img class="w-[10px]" :src="drop" />
         </div>
       </div>
-    </div>
-    <div
-      v-if="optionToggle"
-      class="flex mt-3 justify-center sm:justify-end gap-5 select-none">
-      <button class="bg-light-1 text-dark-0 hover:text-light-0 hover:bg-dark-1">
-        Edit
-      </button>
-      <button
-        @click="Delete(PanelData)"
-        class="bg-red-0 text-light-1 hover:text-dark-0 hover:bg-light-0">
-        Delete
-      </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { categoriesNav } from '../Constants/constants';
-import { search, drop } from '../assets';
-import axios from 'axios';
-import { ref } from 'vue';
+import { categoriesNav } from "../Constants/constants";
+import { search, drop, productSample } from "../assets";
 const props = defineProps({
   PanelData: {
     type: Object,
     required: false,
+    default: {},
+  },
+  index: {
+    type: Number,
+    required: false,
   },
   Nav: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  NavwImg: {
     type: Boolean,
     required: false,
     default: false,
@@ -69,26 +116,15 @@ const props = defineProps({
     type: Function,
     required: false,
   },
+  setToggle: {
+    type: Function,
+    required: false,
+  },
 });
-const optionToggle = ref(false);
-function setToggle() {
-  optionToggle.value = !optionToggle.value;
-}
 </script>
 <style scoped>
 .pan div {
   margin-top: auto;
   margin-bottom: auto;
-}
-button {
-  padding: 0.25rem;
-  padding-right: 1rem;
-  padding-left: 1rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  transition: all;
-}
-button:hover {
-  transition: all;
 }
 </style>
