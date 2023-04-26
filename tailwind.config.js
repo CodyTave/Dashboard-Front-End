@@ -6,7 +6,7 @@ export default {
     extend: {
       colors: {
         dark: ['#171717', '#202020', '#949494', '#353535', '#343434'],
-        light: ['#F7F1F4', '#F0F0F0','#C2C2C2','#727070'],
+        light: ['#F7F1F4', '#F0F0F0', '#C2C2C2', '#727070'],
         red: ['#C0392B'],
       },
       screens: {

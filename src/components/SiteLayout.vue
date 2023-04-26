@@ -2,13 +2,12 @@
   <div class="mt-16 grid md:grid-cols-5 transition-all">
     <SideBar />
     <div
-      class="bg-dark-1 col-span-5 md:col-span-4 h-[70vh] overflow-auto transition-all"
-    >
+      class="bg-dark-1 col-span-5 md:col-span-4 h-[70vh] transition-all relative">
       <slot />
     </div>
   </div>
 </template>
 
 <script setup>
-import SideBar from "./SideBar.vue";
+import SideBar from './SideBar.vue';
 </script>

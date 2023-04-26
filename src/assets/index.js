@@ -6,4 +6,4 @@ import search from './fi-bs-search.svg';
 import drop from './fi-drop.svg';
 import productSample from './Product.jpg';
 
-export { trash, products, categories, user, search, drop ,productSample};
+export { trash, products, categories, user, search, drop, productSample };

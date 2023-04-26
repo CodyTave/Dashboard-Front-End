@@ -9,8 +9,7 @@
 </template>
 
 <script setup>
-import HeadBar from "./components/HeadBar.vue";
-import SiteLayout from "./components/SiteLayout.vue";
-import mainGet from "./Views/mainGet.vue";
-import { RouterLink, RouterView } from "vue-router";
+import HeadBar from './components/HeadBar.vue';
+import SiteLayout from './components/SiteLayout.vue';
+import { RouterLink, RouterView } from 'vue-router';
 </script>

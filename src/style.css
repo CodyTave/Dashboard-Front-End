@@ -15,12 +15,12 @@ body {
 
 /* For webkit based browsers */
 ::-webkit-scrollbar {
-  width: 0px;
+  width: 2px;
 }
 
 /* For the track */
 ::-webkit-scrollbar-track {
-  background: #171717;
+  background: #202020;
 }
 
 /* For the thumb */
@@ -55,4 +55,28 @@ body {
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 500ms;
+}
+
+
+@keyframes tilt-in-top-1 {
+  0% {
+    -webkit-transform: rotateX(-100deg);
+            transform: rotateX(-100deg);
+    -webkit-transform-origin: top;
+            transform-origin: top;
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: rotateX(0deg);
+            transform: rotateX(0deg);
+    -webkit-transform-origin: top;
+            transform-origin: top;
+    opacity: 1;
+  }
+}
+.Notif{
+  animation-name: tilt-in-top-1;
+  animation-duration: .5s;
+  animation-timing-function: ease-in-out;
+
 }

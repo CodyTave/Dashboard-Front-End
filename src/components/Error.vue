@@ -1,5 +1,7 @@
 <template>
-  <div class="flex items-center justify-center">{{ log }}</div>
+  <div class="flex items-center justify-center font-semibold text-2xl">
+    {{ log }}
+  </div>
 </template>
 
 <script setup>

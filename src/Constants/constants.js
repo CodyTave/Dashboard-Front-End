@@ -29,7 +29,13 @@ export const Sidebar = [
 
 export const categoriesNav = [
   { id: 'category', title: 'Category' },
-  { id: 'slug', title: 'Slug', hidee: true },
-  { id: 'created', title: 'Created', hide: true },
-  { id: 'edited', title: 'Edited', hide: true },
+  { id: 'slug', title: 'Slug', hideSm: true },
+  { id: 'created', title: 'Created', hideMid: true },
+  { id: 'edited', title: 'Edited', hideMid: true },
+];
+export const TrashNav = [
+  { id: 'entity', title: 'Entity' },
+  { id: 'slug', title: 'Slug', hideSm: true },
+  { id: 'created', title: 'Created', hideMid: true },
+  { id: 'deleted', title: 'Deleted', hideMid: true },
 ];
