@@ -5,7 +5,8 @@
         <Loading :fullScreen="true" />
       </div>
       <div v-else>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 m-10 fadeInBlur">
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 gap-5 m-10 fadeInBlur overflow-auto h-[70vh]">
           <div>
             <div
               @mouseenter="HoveredImage = true"
@@ -31,13 +32,7 @@
                   <button
                     v-if="!Edit"
                     class="font-light text-sm hover:text-red-0"
-                    @click="
-                      () => {
-                        imageUrl = '';
-                        fileInputRef = null;
-                        fileChanged = true;
-                      }
-                    ">
+                    @click="RemoveImage">
                     Remove
                   </button>
                 </div>
@@ -57,7 +52,7 @@
                 ref="fileInputRef"
                 accept="image/*"
                 style="display: none"
-                @change="handleFileUpload" />
+                @input="handleFileUpload" />
             </div>
           </div>
           <div class="grid gap-5">
@@ -132,14 +127,14 @@ const nom = ref(null);
 const category = ref('');
 const description = ref(null);
 const imageUrl = ref('');
-const fileChanged = ref(false);
+const fileChanged = ref(false); //to avoid posting same product without changes
+const fileInputRef = ref(null);
 if (props.Edit) {
   nom.value = props.Product.nom;
   category.value = props.Product.category.id;
   description.value = props.Product.description;
   imageUrl.value = props.Product.image;
 }
-const fileInputRef = ref(null);
 const HoveredImage = ref(false);
 function Cancel() {
   router.go(-1);
@@ -148,6 +143,11 @@ function Cancel() {
 const openFileDialog = () => {
   fileInputRef.value.click();
   HoveredImage.value = false;
+};
+const RemoveImage = () => {
+  imageUrl.value = '';
+  fileInputRef.value = '';
+  fileChanged.value = true;
 };
 const handleFileUpload = () => {
   fileChanged.value = true;

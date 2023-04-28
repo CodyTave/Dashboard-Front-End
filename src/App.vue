@@ -1,5 +1,5 @@
 <template>
-  <div class="dark:text-light-1 text-dark-0 p-16 h-screen transition-all">
+  <div class="dark:text-light-1 text-dark-0 p-16 h-screen">
     <HeadBar />
     <SiteLayout>
       <!-- <mainGet /> -->

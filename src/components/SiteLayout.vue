@@ -1,8 +1,7 @@
 <template>
   <div class="mt-16 grid md:grid-cols-5 transition-all">
     <SideBar />
-    <div
-      class="bg-dark-1 col-span-5 md:col-span-4 h-[70vh] transition-all relative">
+    <div class="bg-dark-1 col-span-5 md:col-span-4 h-[70vh] relative">
       <slot />
     </div>
   </div>

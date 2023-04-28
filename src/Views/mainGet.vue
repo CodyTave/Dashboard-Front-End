@@ -1,24 +1,35 @@
 <template>
   <div class="absolute bottom-0 left-0 w-full bg-dark-1 z-50">
-    <div class="flex gap-5 mr-5 p-3 items-end justify-end">
+    <div class="flex gap-5 sm:mr-5 p-3 items-end justify-end">
       <RouterLink :to="`/${Entity}/New`">
         <button
           class="bg-light-1 text-dark-0 hover:text-light-0 hover:bg-dark-4 px-10">
           Add New
         </button>
       </RouterLink>
-      <button class="bg-light-1 text-dark-0 hover:text-light-0 hover:bg-dark-4">
-        Export CVC
+      <button
+        @click="parse"
+        class="bg-light-1 text-dark-0 hover:text-light-0 hover:bg-dark-4">
+        Export CSV
       </button>
     </div>
   </div>
   <div class="overflow-auto h-[70vh]">
-    <div class="sm:mx-20 mx-5 transition-all my-5 mb-16">
+    <div class="sm:mx-20 mx-5 my-5 mb-16">
       <Panel
         :Nav="true"
         :NavItems="categoriesNav"
-        :NavwImg="Entity === 'products' ? true : false" />
+        :NavwImg="Entity === 'products' ? true : false"
+        :searchToggle="searchToggle"
+        @input="updateValue" />
+      <div
+        v-if="dataDisplay.length === 0 && !isLoading"
+        class="flex justify-center items-center h-[50vh] text-2xl font-bold">
+        Nothing To See Here : p
+      </div>
+
       <TransitionGroup
+        v-else
         name="list"
         tag="div">
         <div
@@ -52,6 +63,12 @@
             </button>
           </div>
         </div>
+        <button
+          v-if="hasMore && !searchQuery && !isLoading"
+          @click="loadMore"
+          class="flex items-center mx-auto mt-5">
+          Load More
+        </button>
       </TransitionGroup>
     </div>
     <div v-if="isLoading">
@@ -71,6 +88,42 @@ import { useRoute } from 'vue-router';
 import { categoriesNav } from '../Constants/constants';
 import Loading from '../components/Loading.vue';
 import Error from '../components/Error.vue';
+import { Parser } from '@json2csv/plainjs';
+import { saveAs } from 'file-saver';
+
+function parse() {
+  if (props.Entity === 'products') {
+    try {
+      const parser = new Parser();
+      const newData = dataDisplay.value.map((item) => {
+        return {
+          id: item.id,
+          nom: item.nom,
+          slug: item.slug,
+          description: item.description,
+          category: item.category.nom,
+          date_creation: item.date_creation,
+          date_modification: item.date_modification,
+          deleted: item.deleted,
+        };
+      });
+      const csv = parser.parse(newData);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      saveAs(blob, 'data.csv');
+    } catch (err) {
+      console.error(err);
+    }
+  } else {
+    try {
+      const parser = new Parser();
+      const csv = parser.parse(dataDisplay.value);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      saveAs(blob, 'data.csv');
+    } catch (err) {
+      console.error(err);
+    }
+  }
+}
 
 const optionToggle = ref(false);
 const openedPanel = ref(null);
@@ -78,6 +131,12 @@ const route = useRoute();
 const dataDisplay = ref([]);
 const isLoading = ref(true);
 const errorLog = ref(false);
+const searchToggle = ref(false);
+const searchQuery = ref(null);
+const updateTimeout = ref(null);
+const hasMore = ref(true);
+const pageNumber = ref(0);
+
 function setToggle(id) {
   if (openedPanel.value !== id && optionToggle) {
     optionToggle.value = false;
@@ -97,13 +156,34 @@ const props = defineProps({
 
 async function fetch() {
   await axios
-    .get(`http://localhost:8080/api/${props.Entity}`)
+    .get(`http://localhost:8080/api/${props.Entity}?page=${pageNumber.value}`)
     .then(function (response) {
-      dataDisplay.value = [...response.data];
+      dataDisplay.value = [...response.data.content];
       isLoading.value = false;
+      if (response.data.last) {
+        hasMore.value = false;
+      }
     })
     .catch(() => {
       errorLog.value = true;
+    });
+}
+async function fetchSearchQuery() {
+  dataDisplay.value = [];
+  isLoading.value = true;
+
+  if (searchQuery.value === '') {
+    fetch();
+    return;
+  }
+  await axios
+    .get(`http://localhost:8080/api/${props.Entity}?kw=${searchQuery.value}`)
+    .then((response) => {
+      dataDisplay.value = [...response.data.content];
+      isLoading.value = false;
+    })
+    .catch((e) => {
+      console.log(e);
     });
 }
 async function Delete(id) {
@@ -112,20 +192,44 @@ async function Delete(id) {
     .then(function (response) {
       fetch();
     });
-  // dataDisplay.value.splice(id, 1);
 }
-
-watchEffect(() => fetch(), []);
+async function loadMore() {
+  pageNumber.value++;
+  await axios
+    .get(`http://localhost:8080/api/${props.Entity}?page=${pageNumber.value}`)
+    .then(function (response) {
+      dataDisplay.value = [...dataDisplay.value, ...response.data.content];
+      if (response.data.last) {
+        hasMore.value = false;
+      }
+    })
+    .catch(() => {
+      errorLog.value = true;
+    });
+}
 watch(
   () => route.name,
   () => {
     dataDisplay.value = null;
     isLoading.value = true;
     errorLog.value = false;
+    pageNumber.value = 0;
+    hasMore.value = true;
     fetch();
     setToggle();
   }
 );
+async function updateValue(value) {
+  searchQuery.value = value;
+  if (updateTimeout.value) {
+    clearTimeout(updateTimeout.value);
+  }
+
+  updateTimeout.value = setTimeout(() => {
+    fetchSearchQuery();
+  }, 500);
+}
+fetch();
 </script>
 <style>
 .list-move, /* apply transition to moving elements */
