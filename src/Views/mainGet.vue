@@ -63,13 +63,13 @@
             </button>
           </div>
         </div>
-        <button
-          v-if="hasMore && !searchQuery && !isLoading"
-          @click="loadMore"
-          class="flex items-center mx-auto mt-5">
-          Load More
-        </button>
       </TransitionGroup>
+      <button
+        v-if="hasMore && !searchQuery && !isLoading"
+        @click="loadMore"
+        class="flex items-center mx-auto mt-5">
+        {{ isLoadingtwo ? 'Loading...' : 'Load More' }}
+      </button>
     </div>
     <div v-if="isLoading">
       <Loading />
@@ -90,7 +90,6 @@ import Loading from '../components/Loading.vue';
 import Error from '../components/Error.vue';
 import { Parser } from '@json2csv/plainjs';
 import { saveAs } from 'file-saver';
-
 function parse() {
   if (props.Entity === 'products') {
     try {
@@ -136,6 +135,7 @@ const searchQuery = ref(null);
 const updateTimeout = ref(null);
 const hasMore = ref(true);
 const pageNumber = ref(0);
+const isLoadingtwo = ref(false);
 
 function setToggle(id) {
   if (openedPanel.value !== id && optionToggle) {
@@ -173,6 +173,8 @@ async function fetchSearchQuery() {
   isLoading.value = true;
 
   if (searchQuery.value === '') {
+    pageNumber.value = 0;
+    hasMore.value = true;
     fetch();
     return;
   }
@@ -190,14 +192,17 @@ async function Delete(id) {
   await axios
     .patch(`http://localhost:8080/api/${props.Entity}/Delete/${id}`)
     .then(function (response) {
-      fetch();
+      dataDisplay.value = dataDisplay.value.filter((item) => item.id !== id);
+      // fetch();
     });
 }
 async function loadMore() {
   pageNumber.value++;
+  isLoadingtwo.value = true;
   await axios
     .get(`http://localhost:8080/api/${props.Entity}?page=${pageNumber.value}`)
     .then(function (response) {
+      isLoadingtwo.value = false;
       dataDisplay.value = [...dataDisplay.value, ...response.data.content];
       if (response.data.last) {
         hasMore.value = false;

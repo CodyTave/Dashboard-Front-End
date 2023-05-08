@@ -4,9 +4,10 @@
       <div v-if="isLoading">
         <Loading :fullScreen="true" />
       </div>
-      <div v-else>
-        <div
-          class="grid grid-cols-1 md:grid-cols-2 gap-5 m-10 fadeInBlur overflow-auto h-[70vh]">
+      <div
+        class="overflow-auto h-[70vh]"
+        v-else>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 m-10 fadeInBlur">
           <div>
             <div
               @mouseenter="HoveredImage = true"
@@ -97,19 +98,19 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="absolute bottom-0 right-0 mb-5 mr-10 fadeInBlur">
-      <button
-        @click="Cancel"
-        class="font-light text-sm text-light-1 hover:text-light-3">
-        Cancel
-      </button>
+      <div class="absolute bottom-0 right-0 mb-5 mr-10 fadeInBlur">
+        <button
+          @click="Cancel"
+          class="font-light text-sm text-light-1 hover:text-light-3">
+          Cancel
+        </button>
 
-      <button
-        @click="HandleSubmit"
-        class="bg-light-1 text-dark-0 hover:text-light-0 hover:bg-dark-4">
-        Save
-      </button>
+        <button
+          @click="HandleSubmit"
+          class="bg-light-1 text-dark-0 hover:text-light-0 hover:bg-dark-4">
+          Save
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -222,9 +223,9 @@ async function HandleSubmit() {
 }
 async function fetch() {
   await axios
-    .get(`http://localhost:8080/api/categories`)
+    .get(`http://localhost:8080/api/categories?size=20`)
     .then(function (response) {
-      categoriesItems.value = [...response.data];
+      categoriesItems.value = [...response.data.content];
     })
     .catch((e) => {
       console.log(e);
